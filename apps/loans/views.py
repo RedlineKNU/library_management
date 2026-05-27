@@ -91,7 +91,12 @@ class LoanDetailView(LoginRequiredMixin, DetailView):
     context_object_name = 'loan'
 
     def get_queryset(self):
-        return Loan.objects.select_related('book', 'reader__user', 'issued_by')
+        qs = Loan.objects.select_related('book', 'reader__user', 'issued_by')
+        if self.request.user.has_perm('readers.can_view_all_loans'):
+            return qs
+        if hasattr(self.request.user, 'reader_profile'):
+            return qs.filter(reader=self.request.user.reader_profile)
+        return qs.none()
 
 
 class MyLoansView(LoginRequiredMixin, ListView):
@@ -99,15 +104,19 @@ class MyLoansView(LoginRequiredMixin, ListView):
     template_name = 'loans/my_loans.html'
     context_object_name = 'loans'
 
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated and not hasattr(request.user, 'reader_profile'):
+            return redirect('loans:list')
+        return super().dispatch(request, *args, **kwargs)
+
     def get_queryset(self):
-        reader = get_object_or_404(Reader, user=self.request.user)
-        return Loan.objects.filter(reader=reader).select_related('book').order_by('-loan_date')
+        self.reader = self.request.user.reader_profile
+        return Loan.objects.filter(reader=self.reader).select_related('book').order_by('-loan_date')
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        reader = get_object_or_404(Reader, user=self.request.user)
         ctx['unpaid_fines'] = Fine.objects.filter(
-            loan__reader=reader, is_paid=False
+            loan__reader=self.reader, is_paid=False
         ).select_related('loan__book')
         return ctx
 

@@ -22,14 +22,14 @@ class LoanCreateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         from datetime import timedelta
-        self.fields['due_date'].initial = (timezone.now() + timedelta(days=14)).date()
+        self.fields['due_date'].initial = (timezone.now() + timedelta(days=14)).strftime('%Y-%m-%d')
         self.fields['due_date'].required = False
 
 
 class LoanReturnForm(forms.ModelForm):
     return_date = forms.DateField(
         label='Дата повернення',
-        initial=timezone.now,
+        initial=timezone.now().date,
         widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
     )
 

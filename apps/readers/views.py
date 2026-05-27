@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib import messages
 from django.views.generic import ListView, DetailView, UpdateView
@@ -73,11 +74,9 @@ class ReaderListView(PermissionRequiredMixin, ListView):
         query = self.request.GET.get('q')
         if query:
             queryset = queryset.filter(
-                user__first_name__icontains=query
-            ) | queryset.filter(
-                user__last_name__icontains=query
-            ) | queryset.filter(
-                library_card_number__icontains=query
+                Q(user__first_name__icontains=query) |
+                Q(user__last_name__icontains=query) |
+                Q(library_card_number__icontains=query)
             )
         return queryset
 
