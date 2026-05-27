@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ author }} — Бібліотека{% endblock %}
+
+{% block content %}
+<h1 class="h2 mb-4">{{ author.full_name }}</h1>
+{% if author.bio %}
+<p>{{ author.bio }}</p>
+{% endif %}
+<h2 class="h4 mt-4 mb-3">Книги автора</h2>
+<div class="row row-cols-1 row-cols-md-3 g-3">
+    {% for book in books %}
+    <div class="col">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a href="{% url 'books:detail' book.pk %}">{{ book.title }}</a>
+                </h5>
+                {% if book.year_published %}<p class="text-muted small">{{ book.year_published }}</p>{% endif %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-muted">Книг не знайдено.</p>
+    {% endfor %}
+</div>
+{% endblock %}

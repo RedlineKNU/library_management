@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Рекомендації книг — Бібліотека{% endblock %}
+
+{% block content %}
+<h1 class="h2 mb-4"><i class="bi bi-stars"></i> AI Рекомендації книг</h1>
+
+<div class="card shadow mb-4">
+    <div class="card-body p-4">
+        <h5 class="card-title">Опишіть ваші вподобання</h5>
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                {{ form.preferences }}
+            </div>
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+            {% endif %}
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-stars"></i> Отримати рекомендації
+            </button>
+        </form>
+    </div>
+</div>
+
+{% if recommendation %}
+<div class="card border-primary shadow mb-4">
+    <div class="card-header bg-primary text-white">
+        <i class="bi bi-robot"></i> Рекомендації для: "{{ preferences }}"
+    </div>
+    <div class="card-body">
+        <div style="white-space:pre-wrap;">{{ recommendation }}</div>
+    </div>
+</div>
+{% endif %}
+
+{% if past_recommendations %}
+<h4 class="mt-4">Попередні рекомендації</h4>
+{% for rec in past_recommendations %}
+<div class="card mb-2">
+    <div class="card-header d-flex justify-content-between">
+        <em>{{ rec.query }}</em>
+        <small class="text-muted">{{ rec.created_at|date:"d.m.Y H:i" }}</small>
+    </div>
+    <div class="card-body py-2">
+        <small style="white-space:pre-wrap;">{{ rec.response|truncatechars:300 }}</small>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+{% endblock %}

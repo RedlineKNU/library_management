@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Повернення книги — Бібліотека{% endblock %}
+
+{% block content %}
+<h1 class="h2 mb-4"><i class="bi bi-check2-circle"></i> Повернення книги</h1>
+
+<div class="card mb-4 {% if loan.is_overdue %}border-danger{% endif %}">
+    <div class="card-body">
+        <h5>{{ loan.book.title }}</h5>
+        <p>Читач: <strong>{{ loan.reader.full_name }}</strong></p>
+        <p>Дата видачі: {{ loan.loan_date }} | Повернути до: {{ loan.due_date }}</p>
+        {% if loan.is_overdue %}
+        <div class="alert alert-danger mb-0">
+            Прострочення: {{ loan.overdue_days }} дн. — штраф {{ loan.calculate_fine }} грн
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card shadow">
+    <div class="card-body p-4">
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}<div class="text-danger small">{{ field.errors }}</div>{% endif %}
+            </div>
+            {% endfor %}
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-circle"></i> Підтвердити повернення
+                </button>
+                <a href="{% url 'loans:detail' loan.pk %}" class="btn btn-outline-secondary">Скасувати</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

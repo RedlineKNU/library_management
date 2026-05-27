@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Мій профіль — Бібліотека{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card shadow">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0"><i class="bi bi-person-circle"></i> Профіль читача</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Читацький квиток:</strong><br>
+                    <code class="fs-5">{{ reader.library_card_number }}</code></p>
+                <p><strong>Дата реєстрації:</strong> {{ reader.registration_date }}</p>
+                <p><strong>Активні позики:</strong> {{ reader.active_loans_count }}</p>
+                {% if reader.unpaid_fines_total > 0 %}
+                <div class="alert alert-warning py-2">
+                    <strong>Борг по штрафах:</strong> {{ reader.unpaid_fines_total }} грн
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8 mb-4">
+        <div class="card shadow">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0"><i class="bi bi-pencil"></i> Редагування профілю</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        {% for field in form %}
+                        <div class="col-md-6">
+                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}<div class="text-danger small">{{ field.errors }}</div>{% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">Зберегти</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-bookmark"></i> Поточні позики</h5>
+    </div>
+    <div class="card-body">
+        {% if active_loans %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead><tr><th>Книга</th><th>Видана</th><th>Повернути до</th><th>Статус</th></tr></thead>
+                <tbody>
+                    {% for loan in active_loans %}
+                    <tr class="{% if loan.is_overdue %}table-danger{% endif %}">
+                        <td><a href="{% url 'books:detail' loan.book.pk %}">{{ loan.book.title }}</a></td>
+                        <td>{{ loan.loan_date }}</td>
+                        <td>{{ loan.due_date }}</td>
+                        <td>
+                            {% if loan.is_overdue %}
+                            <span class="badge bg-danger">Прострочена ({{ loan.overdue_days }} дн.)</span>
+                            {% else %}
+                            <span class="badge bg-success">Активна</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted">Немає активних позик.</p>
+        {% endif %}
+        <a href="{% url 'loans:my_loans' %}" class="btn btn-outline-secondary btn-sm">Вся історія</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Видача книги — Бібліотека{% endblock %}
+
+{% block content %}
+<h1 class="h2 mb-4"><i class="bi bi-book"></i> Видача книги</h1>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h5>{{ book.title }}</h5>
+        <p class="text-muted">{{ book.authors_display }}</p>
+        <p>Доступно примірників: <strong class="text-success">{{ book.copies_available }}</strong></p>
+    </div>
+</div>
+
+<div class="card shadow">
+    <div class="card-body p-4">
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}<div class="text-danger small">{{ field.errors }}</div>{% endif %}
+            </div>
+            {% endfor %}
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i> Видати
+                </button>
+                <a href="{% url 'books:detail' book.pk %}" class="btn btn-outline-secondary">Скасувати</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

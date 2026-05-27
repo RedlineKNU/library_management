@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Позики — Бібліотека{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2"><i class="bi bi-list-check"></i> Позики</h1>
+    {% if overdue_count > 0 %}
+    <span class="badge bg-danger fs-6">{{ overdue_count }} прострочених</span>
+    {% endif %}
+</div>
+
+<div class="btn-group mb-3">
+    <a href="{% url 'loans:list' %}" class="btn btn-outline-secondary {% if not status_filter %}active{% endif %}">Всі</a>
+    <a href="?status=active" class="btn btn-outline-primary {% if status_filter == 'active' %}active{% endif %}">Активні</a>
+    <a href="?status=returned" class="btn btn-outline-success {% if status_filter == 'returned' %}active{% endif %}">Повернені</a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead class="table-dark">
+            <tr><th>Книга</th><th>Читач</th><th>Видана</th><th>Повернути до</th><th>Статус</th><th>Дії</th></tr>
+        </thead>
+        <tbody>
+            {% for loan in loans %}
+            <tr class="{% if loan.is_overdue %}table-danger{% endif %}">
+                <td><a href="{% url 'books:detail' loan.book.pk %}">{{ loan.book.title }}</a></td>
+                <td><a href="{% url 'readers:detail' loan.reader.pk %}">{{ loan.reader.full_name }}</a></td>
+                <td>{{ loan.loan_date }}</td>
+                <td>{{ loan.due_date }}</td>
+                <td>
+                    {% if loan.is_overdue %}
+                    <span class="badge bg-danger">Прострочена</span>
+                    {% elif loan.status == 'active' %}
+                    <span class="badge bg-primary">Активна</span>
+                    {% else %}
+                    <span class="badge bg-secondary">Повернена</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'loans:detail' loan.pk %}" class="btn btn-sm btn-outline-secondary">Деталі</a>
+                    {% if loan.status == 'active' %}
+                    <a href="{% url 'loans:return_book' loan.pk %}" class="btn btn-sm btn-success">Повернути</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" class="text-center text-muted">Позик немає.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

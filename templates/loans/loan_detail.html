@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}Позика #{{ loan.pk }} — Бібліотека{% endblock %}
+
+{% block content %}
+<h1 class="h2 mb-4">Позика #{{ loan.pk }}</h1>
+
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-header"><strong>Книга</strong></div>
+            <div class="card-body">
+                <h5><a href="{% url 'books:detail' loan.book.pk %}">{{ loan.book.title }}</a></h5>
+                <p class="text-muted">{{ loan.book.authors_display }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-header"><strong>Читач</strong></div>
+            <div class="card-body">
+                <p><strong>{{ loan.reader.full_name }}</strong></p>
+                <p class="text-muted">{{ loan.reader.library_card_number }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <div class="row text-center">
+            <div class="col"><p class="text-muted mb-1">Видана</p><strong>{{ loan.loan_date }}</strong></div>
+            <div class="col"><p class="text-muted mb-1">Повернути до</p><strong>{{ loan.due_date }}</strong></div>
+            {% if loan.return_date %}
+            <div class="col"><p class="text-muted mb-1">Повернена</p><strong>{{ loan.return_date }}</strong></div>
+            {% endif %}
+            <div class="col">
+                <p class="text-muted mb-1">Статус</p>
+                {% if loan.is_overdue %}<span class="badge bg-danger fs-6">Прострочена</span>
+                {% elif loan.status == 'active' %}<span class="badge bg-primary fs-6">Активна</span>
+                {% else %}<span class="badge bg-secondary fs-6">Повернена</span>{% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if loan.is_overdue or loan.overdue_days > 0 %}
+<div class="alert alert-warning">
+    <strong>Прострочення:</strong> {{ loan.overdue_days }} дн. |
+    <strong>Штраф:</strong> {{ loan.calculate_fine }} грн
+    {% if loan.fine %}
+        | <strong>Статус штрафу:</strong>
+        {% if loan.fine.is_paid %}<span class="text-success">Сплачено</span>
+        {% else %}<span class="text-danger">Не сплачено</span>{% endif %}
+    {% endif %}
+</div>
+{% endif %}
+
+{% if loan.status == 'active' and user.has_perm('readers.can_view_all_loans') %}
+<a href="{% url 'loans:return_book' loan.pk %}" class="btn btn-success">
+    <i class="bi bi-check2-circle"></i> Оформити повернення
+</a>
+{% endif %}
+{% endblock %}
