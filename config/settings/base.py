@@ -19,7 +19,6 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
-    'django_celery_beat',
 ]
 
 LOCAL_APPS = [
@@ -102,14 +101,8 @@ LOGIN_URL = '/readers/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/readers/login/'
 
-ANTHROPIC_API_KEY = config('ANTHROPIC_API_KEY', default='')
+GROQ_API_KEY = config('GROQ_API_KEY', default='')
+GROQ_MODEL = 'llama-3.3-70b-versatile'
 
-CELERY_BROKER_URL = config('REDIS_URL', default='redis://redis:6379/0')
-CELERY_RESULT_BACKEND = config('REDIS_URL', default='redis://redis:6379/0')
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'Europe/Kyiv'
-
-FINE_PER_DAY = 5  # UAH per overdue day
+FINE_PER_DAY = 5
 LOAN_DURATION_DAYS = 14
