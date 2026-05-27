@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: library_db
+          POSTGRES_USER: library_user
+          POSTGRES_PASSWORD: library_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      SECRET_KEY: ci-secret-key-not-for-production
+      DB_NAME: library_db
+      DB_USER: library_user
+      DB_PASSWORD: library_password
+      DB_HOST: localhost
+      DB_PORT: 5432
+      GROQ_API_KEY: dummy-key-for-ci
+      ALLOWED_HOSTS: localhost
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run migrations
+        run: python manage.py migrate --settings=config.settings.development
+
+      - name: Run tests
+        run: pytest --tb=short -v
