@@ -1,6 +1,5 @@
 from django.db import models
 from django.utils.text import slugify
-import uuid
 
 
 class Author(models.Model):
@@ -44,7 +43,7 @@ class Book(models.Model):
     title = models.CharField('Назва', max_length=300)
     authors = models.ManyToManyField(Author, verbose_name='Автори', related_name='books')
     genres = models.ManyToManyField(Genre, verbose_name='Жанри', related_name='books', blank=True)
-    isbn = models.CharField('ISBN', max_length=20, unique=True, blank=True, default='')
+    isbn = models.CharField('ISBN', max_length=20, unique=True, blank=True, null=True, default=None)
     publisher = models.CharField('Видавництво', max_length=200, blank=True)
     year_published = models.PositiveIntegerField('Рік видання', null=True, blank=True)
     description = models.TextField('Опис', blank=True)

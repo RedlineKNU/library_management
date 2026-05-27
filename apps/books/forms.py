@@ -1,5 +1,5 @@
 from django import forms
-from .models import Genre
+from .models import Book, Genre
 
 
 class BookSearchForm(forms.Form):
@@ -26,3 +26,4 @@ class BookSearchForm(forms.Form):
         required=False,
         widget=forms.NumberInput(attrs={'placeholder': 'До року', 'class': 'form-control'})
     )
+
