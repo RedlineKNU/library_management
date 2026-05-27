@@ -67,15 +67,17 @@ class Loan(models.Model):
 
     def return_book(self, return_date=None):
         self.return_date = return_date or timezone.now().date()
+        overdue_days = max(0, (self.return_date - self.due_date).days)
         self.status = self.STATUS_RETURNED
         self.book.copies_available += 1
         self.book.save()
         self.save()
 
-        if self.overdue_days > 0:
+        if overdue_days > 0:
+            fine_per_day = getattr(settings, 'FINE_PER_DAY', 5)
             Fine.objects.get_or_create(
                 loan=self,
-                defaults={'amount': self.calculate_fine()}
+                defaults={'amount': overdue_days * fine_per_day}
             )
 
 

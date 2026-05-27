@@ -12,3 +12,5 @@ DATABASES = {
         'PORT': config('DB_PORT', default='5432'),
     }
 }
+
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
