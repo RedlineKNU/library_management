@@ -22,7 +22,7 @@
                 <td>{{ fine.created_at|date:"d.m.Y" }}</td>
                 <td>
                     {% if fine.is_paid %}
-                    <span class="badge bg-success">Сплачено {{ fine.paid_date }}</span>
+                    <span class="badge bg-success">Сплачено {{ fine.paid_date|date:"d.m.Y" }}</span>
                     {% else %}
                     <span class="badge bg-danger">Не сплачено</span>
                     {% endif %}

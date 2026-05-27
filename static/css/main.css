@@ -1,5 +1,12 @@
 body {
     background-color: #f8f9fa;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
 }
 
 .navbar-brand {
@@ -9,10 +16,6 @@ body {
 .card {
     border-radius: 0.5rem;
     transition: transform 0.2s;
-}
-
-.card:hover {
-    transform: translateY(-2px);
 }
 
 #chat-messages::-webkit-scrollbar {

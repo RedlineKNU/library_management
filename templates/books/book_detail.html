@@ -55,8 +55,8 @@
         <p>{{ book.description }}</p>
         {% endif %}
 
-        <div class="d-flex gap-2">
-            {% if user.is_authenticated and user.has_perm('readers.can_view_all_loans') and book.is_available %}
+        <div class="d-flex gap-2 flex-wrap">
+            {% if perms.readers.can_view_all_loans and book.is_available %}
             <a href="{% url 'loans:issue_book' book.pk %}" class="btn btn-primary">
                 <i class="bi bi-book"></i> Видати читачу
             </a>

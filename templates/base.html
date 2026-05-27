@@ -27,24 +27,23 @@
                         <a class="nav-link" href="{% url 'books:genre_list' %}"><i class="bi bi-tags"></i> Жанри</a>
                     </li>
                     {% if user.is_authenticated %}
+                    {% if not perms.readers.can_manage_readers %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'loans:my_loans' %}"><i class="bi bi-bookmark-check"></i> Мої книги</a>
                     </li>
+                    {% endif %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'ai_assistant:chat' %}"><i class="bi bi-robot"></i> AI Асистент</a>
+                        <a class="nav-link" href="{% url 'ai_assistant:recommendations' %}"><i class="bi bi-stars"></i> AI Рекомендації</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'ai_assistant:recommendations' %}"><i class="bi bi-stars"></i> Рекомендації</a>
-                    </li>
-                    {% if user.has_perm('readers.can_manage_readers') %}
+                    {% if perms.readers.can_manage_readers %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                            <i class="bi bi-gear"></i> Адмін
+                            <i class="bi bi-gear"></i> Управління
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'readers:list' %}">Читачі</a></li>
-                            <li><a class="dropdown-item" href="{% url 'loans:list' %}">Позики</a></li>
-                            <li><a class="dropdown-item" href="{% url 'loans:fine_list' %}">Штрафи</a></li>
+                            <li><a class="dropdown-item" href="{% url 'readers:list' %}"><i class="bi bi-people me-1"></i>Читачі</a></li>
+                            <li><a class="dropdown-item" href="{% url 'loans:list' %}"><i class="bi bi-list-check me-1"></i>Позики</a></li>
+                            <li><a class="dropdown-item" href="{% url 'loans:fine_list' %}"><i class="bi bi-cash-coin me-1"></i>Штрафи</a></li>
                         </ul>
                     </li>
                     {% endif %}
@@ -75,7 +74,7 @@
         </div>
     </nav>
 
-    <main class="container my-4">
+    <main class="container my-4 flex-grow-1">
         {% if messages %}
         <div class="messages mb-3">
             {% for message in messages %}
@@ -92,7 +91,7 @@
 
     <footer class="bg-dark text-light py-3 mt-5">
         <div class="container text-center">
-            <small>&copy; 2024 Система управління бібліотекою</small>
+            <small>&copy; {% now "Y" %} Система управління бібліотекою</small>
         </div>
     </footer>
 

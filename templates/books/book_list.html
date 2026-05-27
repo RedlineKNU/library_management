@@ -71,7 +71,7 @@
                 {% else %}
                 <span class="badge bg-danger"><i class="bi bi-x-circle"></i> Недоступна</span>
                 {% endif %}
-                {% if user.is_authenticated and user.has_perm('readers.can_view_all_loans') and book.is_available %}
+                {% if user.is_authenticated and perms.readers.can_view_all_loans and book.is_available %}
                 <a href="{% url 'loans:issue_book' book.pk %}" class="btn btn-sm btn-outline-primary">Видати</a>
                 {% endif %}
             </div>
