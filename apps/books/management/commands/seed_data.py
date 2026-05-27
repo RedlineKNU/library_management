@@ -1,7 +1,8 @@
 import io
 from datetime import date, timedelta
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Permission, User
+from django.contrib.contenttypes.models import ContentType
 from django.core.files.base import ContentFile
 from django.core.management.base import BaseCommand
 from django.utils.text import slugify
@@ -99,9 +100,11 @@ class Command(BaseCommand):
         self._create_genres()
         self._create_authors()
         self._create_books()
+        librarian = self._create_librarian()
         reader = self._create_reader()
-        self._create_loans(reader)
+        self._create_loans(reader, librarian)
         self.stdout.write(self.style.SUCCESS('\nДані успішно створені!'))
+        self.stdout.write('  Бібліотекар: librarian1 / lib12345')
         self.stdout.write('  Читач: reader1 / reader123')
 
     def _create_genres(self):
@@ -151,6 +154,29 @@ class Command(BaseCommand):
                     book.save()
         self.stdout.write('  Книги створено')
 
+    def _create_librarian(self):
+        user, created = User.objects.get_or_create(
+            username='librarian1',
+            defaults={
+                'first_name': 'Марія',
+                'last_name': 'Коваленко',
+                'email': 'librarian@example.com',
+                'is_staff': True,
+            },
+        )
+        if created:
+            user.set_password('lib12345')
+            user.save()
+
+        ct = ContentType.objects.get_for_model(Reader)
+        for codename in ('can_manage_readers', 'can_view_all_loans'):
+            perm = Permission.objects.filter(content_type=ct, codename=codename).first()
+            if perm:
+                user.user_permissions.add(perm)
+
+        self.stdout.write('  Бібліотекаря створено')
+        return user
+
     def _create_reader(self):
         user, created = User.objects.get_or_create(
             username='reader1',
@@ -175,8 +201,8 @@ class Command(BaseCommand):
         self.stdout.write('  Читача створено')
         return reader
 
-    def _create_loans(self, reader):
-        librarian = User.objects.filter(is_staff=True).first()
+    def _create_loans(self, reader, librarian):
+
         today = date.today()
 
         books = list(Book.objects.all())
