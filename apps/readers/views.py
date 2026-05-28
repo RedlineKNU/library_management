@@ -4,8 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib import messages
-from django.views.generic import ListView, DetailView, UpdateView
-from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView
 from .models import Reader
 from .forms import ReaderRegistrationForm, ReaderProfileForm, LibrarianLoginForm
 

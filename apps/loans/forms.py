@@ -13,10 +13,9 @@ class LoanCreateForm(forms.ModelForm):
 
     class Meta:
         model = Loan
-        fields = ('reader', 'due_date', 'notes')
+        fields = ('reader', 'due_date')
         widgets = {
             'due_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
         }
 
     def __init__(self, *args, **kwargs):

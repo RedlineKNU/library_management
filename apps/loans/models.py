@@ -31,8 +31,6 @@ class Loan(models.Model):
         'auth.User', on_delete=models.SET_NULL, null=True,
         verbose_name='Видав', related_name='issued_loans'
     )
-    notes = models.TextField('Нотатки', blank=True)
-
     class Meta:
         verbose_name = 'Позика'
         verbose_name_plural = 'Позики'

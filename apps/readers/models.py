@@ -13,7 +13,6 @@ class Reader(models.Model):
     date_of_birth = models.DateField('Дата народження', null=True, blank=True)
     registration_date = models.DateField('Дата реєстрації', auto_now_add=True)
     is_blocked = models.BooleanField('Заблокований', default=False)
-    notes = models.TextField('Нотатки', blank=True)
 
     class Meta:
         verbose_name = 'Читач'

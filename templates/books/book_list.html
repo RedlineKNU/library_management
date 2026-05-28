@@ -56,7 +56,7 @@
             {% endif %}
             <div class="card-body">
                 <h5 class="card-title">
-                    <a href="{% url 'books:detail' book.pk %}" class="text-decoration-none text-dark">{{ book.title }}</a>
+                    <a href="{% url 'books:detail' book.pk %}" class="text-decoration-none text-dark stretched-link">{{ book.title }}</a>
                 </h5>
                 <p class="card-text text-muted small">{{ book.authors_display }}</p>
                 <div class="d-flex flex-wrap gap-1 mb-2">
@@ -72,7 +72,7 @@
                 <span class="badge bg-danger"><i class="bi bi-x-circle"></i> Недоступна</span>
                 {% endif %}
                 {% if user.is_authenticated and perms.readers.can_view_all_loans and book.is_available %}
-                <a href="{% url 'loans:issue_book' book.pk %}" class="btn btn-sm btn-outline-primary">Видати</a>
+                <a href="{% url 'loans:issue_book' book.pk %}" class="btn btn-sm btn-outline-primary position-relative" style="z-index:2;">Видати</a>
                 {% endif %}
             </div>
         </div>
